@@ -402,5 +402,51 @@ export default {
             }
         }
         return false;
+    },
+    convertFileUrlToImageUrl(url, resolution = 128) {
+        if (!url) {
+            return '';
+        }
+        /**
+         * possible patterns?
+         * /file/file_fileId/version
+         * /file/file_fileId/version/
+         * /file/file_fileId/version/file
+         * /file/file_fileId/version/file/
+         */
+        const pattern = /file\/file_([a-f0-9-]+)\/(\d+)(\/file)?\/?$/;
+        const match = url.match(pattern);
+
+        if (match) {
+            const fileId = match[1];
+            const version = match[2];
+            return `https://api.vrchat.cloud/api/1/image/file_${fileId}/${version}/${resolution}`;
+        }
+        // no match return origin url
+        return url;
+    },
+    replaceVrcPackageUrl(url) {
+        if (!url) {
+            return '';
+        }
+        return url.replace('https://api.vrchat.cloud/', 'https://vrchat.com/');
+    },
+    getLaunchURL(instance) {
+        var L = instance;
+        if (L.instanceId) {
+            if (L.shortName) {
+                return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
+                    L.worldId
+                )}&instanceId=${encodeURIComponent(
+                    L.instanceId
+                )}&shortName=${encodeURIComponent(L.shortName)}`;
+            }
+            return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
+                L.worldId
+            )}&instanceId=${encodeURIComponent(L.instanceId)}`;
+        }
+        return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
+            L.worldId
+        )}`;
     }
 };
